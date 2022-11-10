@@ -1,0 +1,89 @@
+openapi: "3.0.0"
+
+info:
+  version: "1.0"
+  title: SimpleSearcher
+  description: "Простой поисковик по тексту"
+
+servers:
+  - url: http://localhost:8000
+    description: доступный адрес
+
+paths:
+  /search/<text>:
+    get:
+      summary: "Поисковый эндпоинт"
+      parameters:
+        - name: text
+          in: query
+          description: "Любое слово или словосочетание."
+          required: true
+          schema:
+            type: number
+            format: str
+          example: "труба"
+      responses:
+        200:
+          description: Удачный статус код
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSearch_get'
+
+  /id/<id>:
+    delete:
+      summary: "Эндпоинт для удаления"
+      operationId: deleteSimpleSearch
+      parameters:
+        - name: id
+          in: query
+          description: "Любой существующий id, будет удален из 2-х БД"
+          required: true
+          schema:
+            type: number
+            format: integer
+          example: 1
+      responses:
+        200:
+          description: Sunrise and sunset times response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleSearch_del'
+
+components:
+  schemas:
+    SimpleSearch_del:
+      title: Response
+      type: object
+      properties:
+        info:
+          type: string
+          description: "Просто информационный ответ"
+          example: "Объект удален"
+    SimpleSearch_get:
+      title: Response
+      type: object
+      properties:
+        1501:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: id в postgreSQL
+              example: 1501
+            rubrics:
+              description: массив рубрик
+              example: [
+              "VK-1603736028819866",
+              "VK-95995018483",
+              "VK-89635598958"
+              ]
+            text:
+              type: string
+              description: сырой текст
+              example: "Защита переднего бампера - кенгурятник, труба двойная, труба одинарная, труба с изгибом.\nЗащита порогов - трубы с проступьями для ног, площадки.\nЗащита заднего бампера - уголки, труба прямая.\nРейлинги на крышу.\nШторки салонные. \nПо вопросам в л.с"
+            created_date:
+              type: string
+              description: дата записи
+              example: '2019-04-16'

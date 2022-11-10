@@ -1,0 +1,41 @@
+version: '3.9'
+ 
+services:
+  postgres_db:
+    container_name: postgres_db
+    image: postgres:14.4
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+
+  elasticsearch:
+    image: elasticsearch:7.17.7
+    container_name: elasticsearch
+    volumes:
+      - elastic_data:/var/lib/elasticsearch/data/
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+    env_file:
+      - .env
+    depends_on:
+      - postgres_db
+
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      - elasticsearch
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+
+volumes:
+  postgres_data:
+  elastic_data:
